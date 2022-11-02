@@ -15,9 +15,10 @@ Models _$ModelsFromJson(Map<String, dynamic> json) => Models(
     );
 
 Map<String, dynamic> _$ModelsToJson(Models instance) => <String, dynamic>{
-      'id': instance.id,
+      
       'name': instance.name,
       'price': instance.price,
       'stocks': instance.stocks,
-      'photo': instance.photo,
+      'photo':instance.photo
+      
     };

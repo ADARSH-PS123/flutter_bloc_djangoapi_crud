@@ -18,10 +18,18 @@ class MyBloc extends Bloc<MyEvent, MyState> {
   Repo repo;
   MyBloc(this.repo) : super(MyState.initial()) {
     on<_Read>((event, emit) async {
-      final result = await repo.read();
+      final result =await  repo.read();
+    await  emit.forEach(result, onData:((Either<Failure,List<Models>>data) => data.fold(
+          (l) => state.copyWith(optionSuccessFailure: Some(Left(l))),
+          (List<Models> lModels) => state.copyWith(lModels: lModels))
+      ) );
+    });
+
+   on<_Create>((event, emit) async {
+      final result = await repo.create(event.model);
       final out = result.fold(
           (l) => state.copyWith(optionSuccessFailure: Some(Left(l))),
-          (lModels) => state.copyWith(lModels: lModels));
+          (strings) => state.copyWith(optionSuccessFailure: Some(Right(strings))));
       emit(out);
     });
   }
