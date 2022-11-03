@@ -18,18 +18,36 @@ class MyBloc extends Bloc<MyEvent, MyState> {
   Repo repo;
   MyBloc(this.repo) : super(MyState.initial()) {
     on<_Read>((event, emit) async {
-      final result =await  repo.read();
-    await  emit.forEach(result, onData:((Either<Failure,List<Models>>data) => data.fold(
-          (l) => state.copyWith(optionSuccessFailure: Some(Left(l))),
-          (List<Models> lModels) => state.copyWith(lModels: lModels))
-      ) );
+      final result = await repo.read();
+      await emit.forEach(result,
+          onData: ((Either<Failure, List<Models>> data) => data.fold(
+              (l) => state.copyWith(optionSuccessFailure: Some(Left(l))),
+              (List<Models> lModels) => state.copyWith(lModels: lModels))));
     });
 
-   on<_Create>((event, emit) async {
+    on<_Create>((event, emit) async {
       final result = await repo.create(event.model);
       final out = result.fold(
           (l) => state.copyWith(optionSuccessFailure: Some(Left(l))),
-          (strings) => state.copyWith(optionSuccessFailure: Some(Right(strings))));
+          (strings) =>
+              state.copyWith(optionSuccessFailure: Some(Right(strings))));
+      emit(out);
+    });
+    on<_Delete>((event, emit) async {
+      final result = await repo.delete(event.id);
+    final out =   result.fold(
+          (l) => state.copyWith(optionSuccessFailure: Some(Left(l))),
+          (string) =>
+              state.copyWith(optionSuccessFailure: Some(Right(string))));
+              emit(out);
+    });
+
+       on<_Update>((event, emit) async {
+      final result = await repo.update(event.model);
+      final out = result.fold(
+          (l) => state.copyWith(optionSuccessFailure: Some(Left(l))),
+          (strings) =>
+              state.copyWith(optionSuccessFailure: Some(Right(strings))));
       emit(out);
     });
   }

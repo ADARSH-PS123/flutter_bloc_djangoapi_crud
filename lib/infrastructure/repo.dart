@@ -58,6 +58,7 @@ class Repo implements IRepo {
       var client = http.Client();
       var url = Uri.parse(ApiEndPoints.endPoint);
       http.Response response = await client.get(url);
+      print(response.body);
       if (response.statusCode == 200) {
         List data = jsonDecode(response.body);
         final result = data.map(
@@ -81,9 +82,10 @@ class Repo implements IRepo {
     // TODO: implement update
     try {
       var client = http.Client();
+    
       var url = Uri.parse(
           ApiEndPoints.endPoint.toString() + model.id.toString() + "/");
-      var response = await client.put(url, body: model.toJson());
+      var response = await client.put(url, body: jsonEncode(model.toJson()));
       if (response.statusCode == 201) {
         return Right('success');
       } else {
